@@ -39,30 +39,44 @@ async function initiateCall(profile, vehicleDetails, reportId) {
     phone_number: profile.authority_phone,
     task: task,
 
-    // Free tier compatible settings
-    voice: 'june', // Good quality voice available on free tier
-    language: 'EL', // Greek - use uppercase for better recognition
+    // ============================================
+    // OPTIMIZED FOR HUMAN-LIKE CONVERSATION
+    // ============================================
 
-    // Keep call short to save credits (free tier has limited minutes)
-    max_duration: 180, // 3 minutes max - enough for a parking report
+    // Model: "turbo" = most realistic, human-like conversations
+    // Options: "base" (script-accurate), "enhanced" (fast), "turbo" (most natural)
+    model: 'turbo',
 
-    // Basic settings (free tier compatible)
+    // Language: "babel" = multilingual engine that handles Greek better
+    // Auto-detects and switches languages on the fly
+    language: 'babel',
+
+    // Voice: natural-sounding female voice
+    voice: 'june',
+
+    // Temperature: 0.7 = good balance of creativity and coherence
+    // Higher (0.9) = more creative but may go off-script
+    // Lower (0.3) = follows script strictly but sounds robotic
+    temperature: 0.7,
+
+    // Interruption threshold: 50 = responds quickly, natural back-and-forth
+    // Lower = quicker responses (more natural)
+    // Higher = waits longer (may seem slow/robotic)
+    interruption_threshold: 50,
+
+    // First sentence with natural Greek greeting
+    first_sentence: `${getGreekGreeting()} σας. Θέλω να αναφέρω ένα παράνομα παρκαρισμένο αυτοκίνητο, αν μπορείτε να με βοηθήσετε.`,
+
+    // ============================================
+    // BASIC SETTINGS
+    // ============================================
+
+    max_duration: 180, // 3 minutes max
     record: true,
     wait_for_greeting: true,
-    amd: false, // Disable answering machine detection for simplicity
 
-    // Reduce latency for more natural conversation
-    reduce_latency: true,
-
-    // Temperature for response variation (0.0-1.0)
-    // Higher = more creative, lower = more predictable
-    temperature: 0.8,
-
-    // First sentence the AI speaks (helps start naturally)
-    first_sentence: `${getGreekGreeting()} σας. Εεε, θέλω να αναφέρω ένα παράνομα παρκαρισμένο αυτοκίνητο.`,
-
-    // Transfer settings (in case operator transfers)
-    transfer_list: {},
+    // Voicemail handling - hang up if voicemail detected
+    voicemail_action: 'hangup',
 
     metadata: {
       report_id: reportId,
