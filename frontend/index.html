@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="AI Voice Call Parking Violation Reporter for Greece">
+  <title>Parking Reporter - Αναφορά Παράνομης Στάθμευσης</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="app">
+    <!-- Header -->
+    <header class="header">
+      <h1>🚗 Parking Reporter</h1>
+      <p class="subtitle">Αυτόματη αναφορά παράνομης στάθμευσης</p>
+      <div class="language-toggle">
+        <button id="lang-el" class="lang-btn active" data-lang="el">ΕΛ</button>
+        <button id="lang-en" class="lang-btn" data-lang="en">EN</button>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Alert Banner -->
+      <div id="alert-banner" class="alert-banner hidden">
+        <span id="alert-message"></span>
+        <button id="alert-close" class="alert-close">&times;</button>
+      </div>
+
+      <!-- Status Indicator -->
+      <div id="status-indicator" class="status-indicator hidden">
+        <div class="status-spinner"></div>
+        <span id="status-text">Καλείται...</span>
+      </div>
+
+      <!-- Report Button Section -->
+      <section id="report-section" class="report-section">
+        <button id="report-btn" class="report-button" disabled>
+          <span class="btn-icon">📞</span>
+          <span class="btn-text" data-el="Αναφορά Παράνομης Στάθμευσης" data-en="Report Parking Violation">
+            Αναφορά Παράνομης Στάθμευσης
+          </span>
+        </button>
+        <p id="rate-limit-info" class="rate-limit-info"></p>
+      </section>
+
+      <!-- Profile Section -->
+      <section id="profile-section" class="section">
+        <div class="section-header" data-toggle="profile-form">
+          <h2 data-el="Το Προφίλ μου" data-en="My Profile">Το Προφίλ μου</h2>
+          <span class="toggle-icon">▼</span>
+        </div>
+        <form id="profile-form" class="form collapsed">
+          <div class="form-group">
+            <label for="full_name" data-el="Ονοματεπώνυμο" data-en="Full Name">Ονοματεπώνυμο</label>
+            <input type="text" id="full_name" name="full_name" required
+                   placeholder="π.χ. Γιώργος Παπαδόπουλος">
+          </div>
+
+          <div class="form-group">
+            <label for="address" data-el="Διεύθυνση" data-en="Address">Διεύθυνση</label>
+            <input type="text" id="address" name="address" required
+                   placeholder="π.χ. Λεωφόρος Αλεξάνδρας 123, Αθήνα">
+          </div>
+
+          <div class="form-group">
+            <label for="phone_number" data-el="Τηλέφωνο Επικοινωνίας" data-en="Phone Number">Τηλέφωνο Επικοινωνίας</label>
+            <input type="tel" id="phone_number" name="phone_number" required
+                   placeholder="+30 69x xxx xxxx">
+          </div>
+
+          <div class="form-group">
+            <label for="preferred_authority" data-el="Αρχή Αναφοράς" data-en="Reporting Authority">Αρχή Αναφοράς</label>
+            <select id="preferred_authority" name="preferred_authority">
+              <option value="trochia">Τροχαία</option>
+              <option value="dimotiki">Δημοτική Αστυνομία</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="authority_phone" data-el="Τηλέφωνο Αρχής" data-en="Authority Phone">Τηλέφωνο Αρχής</label>
+            <input type="tel" id="authority_phone" name="authority_phone"
+                   placeholder="+30 210 xxx xxxx">
+            <small data-el="Τηλέφωνο της τοπικής Τροχαίας ή Δημοτικής Αστυνομίας"
+                   data-en="Local traffic or municipal police phone number">
+              Τηλέφωνο της τοπικής Τροχαίας ή Δημοτικής Αστυνομίας
+            </small>
+          </div>
+
+          <button type="submit" class="btn btn-primary" data-el="Αποθήκευση Προφίλ" data-en="Save Profile">
+            Αποθήκευση Προφίλ
+          </button>
+        </form>
+      </section>
+
+      <!-- Vehicle Details Section -->
+      <section id="vehicle-section" class="section">
+        <div class="section-header" data-toggle="vehicle-form">
+          <h2 data-el="Στοιχεία Οχήματος (προαιρετικά)" data-en="Vehicle Details (optional)">
+            Στοιχεία Οχήματος (προαιρετικά)
+          </h2>
+          <span class="toggle-icon">▼</span>
+        </div>
+        <form id="vehicle-form" class="form collapsed">
+          <div class="form-group">
+            <label for="vehicle_plate" data-el="Αριθμός Πινακίδας" data-en="License Plate">Αριθμός Πινακίδας</label>
+            <input type="text" id="vehicle_plate" name="vehicle_plate"
+                   placeholder="π.χ. ΑΒΓ 1234" maxlength="10">
+          </div>
+
+          <div class="form-group">
+            <label for="vehicle_color" data-el="Χρώμα" data-en="Color">Χρώμα</label>
+            <select id="vehicle_color" name="vehicle_color">
+              <option value="">-- Επιλέξτε --</option>
+              <option value="white">Λευκό</option>
+              <option value="black">Μαύρο</option>
+              <option value="silver">Ασημί</option>
+              <option value="gray">Γκρι</option>
+              <option value="red">Κόκκινο</option>
+              <option value="blue">Μπλε</option>
+              <option value="green">Πράσινο</option>
+              <option value="yellow">Κίτρινο</option>
+              <option value="orange">Πορτοκαλί</option>
+              <option value="brown">Καφέ</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="vehicle_make_model" data-el="Μάρκα/Μοντέλο" data-en="Make/Model">Μάρκα/Μοντέλο</label>
+            <input type="text" id="vehicle_make_model" name="vehicle_make_model"
+                   placeholder="π.χ. Toyota Yaris">
+          </div>
+
+          <button type="button" id="clear-vehicle-btn" class="btn btn-secondary"
+                  data-el="Καθαρισμός" data-en="Clear">
+            Καθαρισμός
+          </button>
+        </form>
+      </section>
+
+      <!-- Call History Section -->
+      <section id="history-section" class="section">
+        <div class="section-header" data-toggle="history-list">
+          <h2 data-el="Ιστορικό Κλήσεων" data-en="Call History">Ιστορικό Κλήσεων</h2>
+          <span class="toggle-icon">▼</span>
+        </div>
+        <div id="history-list" class="history-list collapsed">
+          <p class="no-history" data-el="Δεν υπάρχουν κλήσεις ακόμα" data-en="No calls yet">
+            Δεν υπάρχουν κλήσεις ακόμα
+          </p>
+        </div>
+      </section>
+    </main>
+
+    <!-- Confirmation Modal -->
+    <div id="confirm-modal" class="modal hidden">
+      <div class="modal-content">
+        <h3 data-el="Επιβεβαίωση Κλήσης" data-en="Confirm Call">Επιβεβαίωση Κλήσης</h3>
+        <div class="modal-body">
+          <p data-el="Θα πραγματοποιηθεί αυτόματη κλήση προς:"
+             data-en="An automated call will be made to:">
+            Θα πραγματοποιηθεί αυτόματη κλήση προς:
+          </p>
+          <p id="confirm-authority" class="confirm-detail"></p>
+
+          <div class="disclaimer">
+            <p data-el="⚠️ Αυτή είναι αυτοματοποιημένη κλήση. Οι αρχές ενδέχεται να ζητήσουν επιπλέον στοιχεία τηλεφωνικά."
+               data-en="⚠️ This is an automated call. Authorities may require additional information via phone.">
+              ⚠️ Αυτή είναι αυτοματοποιημένη κλήση. Οι αρχές ενδέχεται να ζητήσουν επιπλέον στοιχεία τηλεφωνικά.
+            </p>
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button id="confirm-cancel" class="btn btn-secondary" data-el="Ακύρωση" data-en="Cancel">
+            Ακύρωση
+          </button>
+          <button id="confirm-proceed" class="btn btn-danger" data-el="Πραγματοποίηση Κλήσης" data-en="Make Call">
+            Πραγματοποίηση Κλήσης
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <p data-el="Μόνο για αναφορές παράνομης στάθμευσης. Μην χρησιμοποιείτε για έκτακτες ανάγκες."
+         data-en="For parking violation reports only. Do not use for emergencies.">
+        Μόνο για αναφορές παράνομης στάθμευσης. Μην χρησιμοποιείτε για έκτακτες ανάγκες.
+      </p>
+      <p>🆘 <span data-el="Για έκτακτη ανάγκη καλέστε" data-en="For emergencies call">Για έκτακτη ανάγκη καλέστε</span> <strong>100</strong> ή <strong>112</strong></p>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
