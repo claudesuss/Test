@@ -6,7 +6,7 @@
 
 const axios = require('axios');
 const { generateBlandTask } = require('./voiceScript');
-const { isBlockedNumber } = require('../utils/greekHelpers');
+const { isBlockedNumber, getGreekGreeting } = require('../utils/greekHelpers');
 
 const BLAND_API_URL = 'https://api.bland.ai/v1';
 
@@ -38,32 +38,31 @@ async function initiateCall(profile, vehicleDetails, reportId) {
   const requestBody = {
     phone_number: profile.authority_phone,
     task: task,
-    voice: 'nat', // Natural sounding voice
-    language: 'el', // Greek
-    max_duration: 300, // 5 minutes max
+
+    // Free tier compatible settings
+    voice: 'june', // Good quality voice available on free tier
+    language: 'EL', // Greek - use uppercase for better recognition
+
+    // Keep call short to save credits (free tier has limited minutes)
+    max_duration: 180, // 3 minutes max - enough for a parking report
+
+    // Basic settings (free tier compatible)
     record: true,
     wait_for_greeting: true,
+    amd: false, // Disable answering machine detection for simplicity
 
-    // Voice settings for natural speech
-    voice_settings: {
-      speed: 0.9, // Slightly slower for natural pace
-      stability: 0.6, // Some variation for natural sound
-      similarity_boost: 0.75
-    },
+    // Reduce latency for more natural conversation
+    reduce_latency: true,
 
-    // Conversation settings
-    interruption_threshold: 100, // Allow natural interruptions
-    temperature: 0.7, // Some creativity in responses
+    // Temperature for response variation (0.0-1.0)
+    // Higher = more creative, lower = more predictable
+    temperature: 0.8,
 
-    // Make it conversational
-    model: 'enhanced', // Use enhanced model if available
+    // First sentence the AI speaks (helps start naturally)
+    first_sentence: `${getGreekGreeting()} σας. Εεε, θέλω να αναφέρω ένα παράνομα παρκαρισμένο αυτοκίνητο.`,
 
-    // Add natural pauses
-    pronunciation_guide: {
-      'εεε': 'ehh',
-      'λοιπόν': 'lipón',
-      'δηλαδή': 'dhiladhí'
-    },
+    // Transfer settings (in case operator transfers)
+    transfer_list: {},
 
     metadata: {
       report_id: reportId,
