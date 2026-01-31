@@ -38,11 +38,33 @@ async function initiateCall(profile, vehicleDetails, reportId) {
   const requestBody = {
     phone_number: profile.authority_phone,
     task: task,
-    voice: 'maya', // Bland.ai voice - you may need to check for Greek-compatible voices
+    voice: 'nat', // Natural sounding voice
     language: 'el', // Greek
     max_duration: 300, // 5 minutes max
     record: true,
     wait_for_greeting: true,
+
+    // Voice settings for natural speech
+    voice_settings: {
+      speed: 0.9, // Slightly slower for natural pace
+      stability: 0.6, // Some variation for natural sound
+      similarity_boost: 0.75
+    },
+
+    // Conversation settings
+    interruption_threshold: 100, // Allow natural interruptions
+    temperature: 0.7, // Some creativity in responses
+
+    // Make it conversational
+    model: 'enhanced', // Use enhanced model if available
+
+    // Add natural pauses
+    pronunciation_guide: {
+      'εεε': 'ehh',
+      'λοιπόν': 'lipón',
+      'δηλαδή': 'dhiladhí'
+    },
+
     metadata: {
       report_id: reportId,
       profile_id: profile.id,
